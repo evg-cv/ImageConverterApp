@@ -1,0 +1,222 @@
+#:set dark_background [.0, .0, .0, 1.0]
+#:set blue_button_1 [0.46, 0.34, 0.86, 1.0]
+#:import VideoWidget gui.video.VideoWidget
+
+<MainScreen>:
+    BoxLayout:
+        orientation: 'horizontal'
+        BoxLayout:
+            canvas.before:
+                Color:
+                    rgba: dark_background
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
+
+            orientation: 'vertical'
+            size_hint: 0.6, 0.95
+            padding: [20, 20, 20, 20]
+            spacing: 10
+            Label:
+                height: 10
+                size_hint_y: None
+                size_hint_x: 0.1
+                font_size: 24
+                text: "Camera"
+                color: 1, 0, 0, 1
+            VideoWidget:
+                id: video
+                allow_stretch: True
+                port_num: 0
+                size_hint_y: None
+                height: 630
+                animation_offset: 1
+            Widget:
+        BoxLayout:
+            canvas.before:
+                Color:
+                    rgba: dark_background
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
+            orientation: 'vertical'
+            size_hint_x: 0.4
+            size_hint_y: 0.95
+            padding: 20, 40, 20, 20
+            spacing: 10
+            BoxLayout:
+                orientation: 'vertical'
+                padding: 0, 40, 0, 0
+                size_hint_y: None
+                height: 170
+                Label:
+                    size_hint_y: None
+                    height: 80
+                    text: "Number of Eggs"
+                    font_size: 20
+                Label:
+                    size_hint_y: None
+                    height: 50
+                    id: egg_num
+                    text: "0"
+                    font_size: 54
+                    color: 1, 0, 0, 1
+            BoxLayout:
+                orientation: 'horizontal'
+                padding: 0, 40, 0, 40
+                size_hint_y: None
+                height: 130
+                BoxLayout:
+                    size_hint_x: 0.5
+                    orientation: "vertical"
+                    BoxLayout:
+                        orientation: 'horizontal'
+                        size_hint_x: 0.9
+                        size_hint_y: None
+                        height: 20
+                        Label:
+                            text: "Radius Min"
+                            font_size: 16
+                            pos_hint_x: 0.1
+                        Label:
+                            id: radius_min
+                            pos_hint_x: 0.9
+                            font_size: 16
+                            text: "1"
+                            color: 1, 0, 0, 1
+                    Slider:
+                        id: radius_min_slider
+                        size_hint_y: None
+                        height: 30
+                        size_hint_x: 0.9
+                        min: 0
+                        max: 61
+                        value: 1
+                        on_value:
+                            radius_min.text = str(int(self.value))
+                            root.set_radius_min()
+                BoxLayout:
+                    size_hint_x: 0.5
+                    orientation: "vertical"
+                    BoxLayout:
+                        orientation: 'horizontal'
+                        size_hint_x: 0.9
+                        size_hint_y: None
+                        height: 20
+                        Label:
+                            text: "Radius Max"
+                            font_size: 16
+                            pos_hint_x: 0.1
+                        Label:
+                            id: radius_max
+                            pos_hint_x: 0.9
+                            font_size: 16
+                            text: "60"
+                            color: 1, 0, 0, 1
+                    Slider:
+                        id: radius_max_slider
+                        size_hint_y: None
+                        height: 30
+                        size_hint_x: 0.9
+                        min: 0
+                        max: 61
+                        value: 60
+                        on_value:radius_max.text = str(int(self.value))
+            BoxLayout:
+                orientation: 'horizontal'
+                padding: 0, 40, 0, 40
+                size_hint_y: None
+                height: 130
+                BoxLayout:
+                    size_hint_x: 0.5
+                    orientation: "vertical"
+                    BoxLayout:
+                        orientation: 'horizontal'
+                        size_hint_x: 0.9
+                        size_hint_y: None
+                        height: 20
+                        Label:
+                            text: "Area Min"
+                            font_size: 16
+                            pos_hint_x: 0.1
+                        Label:
+                            id: area_min
+                            pos_hint_x: 0.9
+                            font_size: 16
+                            text: "180"
+                            color: 1, 0, 0, 1
+                    Slider:
+                        id: area_min_slider
+                        size_hint_y: None
+                        height: 30
+                        size_hint_x: 0.9
+                        min: 0
+                        max: 4001
+                        value: 180
+                        on_value:area_min.text = str(int(self.value))
+                BoxLayout:
+                    size_hint_x: 0.5
+                    orientation: "vertical"
+                    BoxLayout:
+                        orientation: 'horizontal'
+                        size_hint_x: 0.9
+                        size_hint_y: None
+                        height: 20
+                        Label:
+                            text: "Area Max"
+                            font_size: 16
+                            pos_hint_x: 0.1
+                        Label:
+                            id: area_max
+                            pos_hint_x: 0.9
+                            font_size: 16
+                            text: "4000"
+                            color: 1, 0, 0, 1
+                    Slider:
+                        id: area_max_slider
+                        size_hint_y: None
+                        height: 30
+                        size_hint_x: 0.9
+                        min: 0
+                        max: 4001
+                        value: 4000
+                        on_value:area_max.text = str(int(self.value))
+            BoxLayout:
+                orientation: 'horizontal'
+                padding: 0, 40, 0, 40
+                size_hint_y: None
+                height: 130
+                Button:
+                    size_hint_y: None
+                    height: 50
+                    text: "Start"
+                    pos_hint : {'x': 0, 'center_y':.6}
+                    background_color: blue_button_1
+                    on_press:
+                        root.start_counting()
+                Button:
+                    size_hint_y: None
+                    height: 50
+                    text: "Stop"
+                    pos_hint : {'x': 0, 'center_y':.6}
+                    background_color: blue_button_1
+                    on_press:
+                        root.stop_counting()
+                Button:
+                    size_hint_y: None
+                    height: 50
+                    id: pause_btn
+                    text: "Pause"
+                    pos_hint : {'x': 0, 'center_y':.6}
+                    background_color: blue_button_1
+                    on_press:
+                        root.pause_counting()
+                Button:
+                    size_hint_y: None
+                    height: 50
+                    text: "Previous Counts"
+                    pos_hint : {'x': 0, 'center_y':.6}
+                    background_color: blue_button_1
+                    on_press:
+                        root.display_previous_number()
+            Widget:
