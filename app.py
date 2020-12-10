@@ -1,12 +1,12 @@
 import os
-import chromedriver_binary
+# import chromedriver_binary
 
 from kivy.app import App
 from kivy.config import Config
 from kivy.core.window import Window
 from kivy.uix.screenmanager import ScreenManager
-from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
+# from selenium import webdriver
+# from selenium.webdriver.chrome.options import Options
 from kivysrc.main_screen import MainScreen
 from kivysrc.file_browser import AlertDialog
 from settings import MAIN_SCREEN, APP_HEIGHT, APP_WIDTH, CHECK_URL
@@ -52,12 +52,12 @@ class ImageConverterTool(App):
             return False
 
     def build(self):
-        if self.check_url():
-            self.sm.current = MAIN_SCREEN
-            return self.sm
-        else:
-            warning_popup = AlertDialog(f"File Corrupted!")
-            warning_popup.open()
+        # if self.check_url():
+        self.sm.current = MAIN_SCREEN
+        return self.sm
+        # else:
+        #     warning_popup = AlertDialog(f"File Corrupted!")
+        #     warning_popup.open()
 
     def on_stop(self):
         Window.close()
