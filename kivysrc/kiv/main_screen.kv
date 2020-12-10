@@ -1,8 +1,14 @@
 #:set dark_background [.0, .0, .0, 1.0]
 #:set blue_button_1 [0.46, 0.34, 0.86, 1.0]
-#:import VideoWidget gui.video.VideoWidget
 
 <MainScreen>:
+    round: chk_round
+    chamfer: chk_chamfer
+    zoom_in: chk_zoom_in
+    zoom_out: chk_zoom_out
+    rot_90: chk_90
+    rot_180: chk_180
+    rot_270: chk_270
     BoxLayout:
         orientation: 'horizontal'
         BoxLayout:
@@ -17,20 +23,23 @@
             size_hint: 0.6, 0.95
             padding: [20, 20, 20, 20]
             spacing: 10
-            Label:
-                height: 10
-                size_hint_y: None
-                size_hint_x: 0.1
-                font_size: 24
-                text: "Camera"
-                color: 1, 0, 0, 1
-            VideoWidget:
-                id: video
+            Image:
+                id: image
                 allow_stretch: True
-                port_num: 0
+                source: 'utils/img/init.png'
                 size_hint_y: None
-                height: 630
+                height: 800
+                pos_hint : {'center_x':.5, 'center_y':.55}
                 animation_offset: 1
+            Button:
+                size_hint_y: None
+                size_hint_x: 0.5
+                height: 50
+                text: "Select Image"
+                pos_hint: {'center_x': 0.5}
+                background_color: blue_button_1
+                on_press:
+                    root.open_image()
             Widget:
         BoxLayout:
             canvas.before:
@@ -45,178 +54,216 @@
             padding: 20, 40, 20, 20
             spacing: 10
             BoxLayout:
-                orientation: 'vertical'
-                padding: 0, 40, 0, 0
+                orientation: 'horizontal'
+                padding: 0, 60, 0, 35
                 size_hint_y: None
-                height: 170
+                height: 137
                 Label:
+                    size_hint_x: 0.4
                     size_hint_y: None
-                    height: 80
-                    text: "Number of Eggs"
+                    pos_hint: {'center_y': 0.5}
+                    text: "Rotation Angle:"
                     font_size: 20
-                Label:
+                CheckBox:
+                    size_hint_x: 0.1
                     size_hint_y: None
-                    height: 50
-                    id: egg_num
-                    text: "0"
-                    font_size: 54
+                    height: 42
+                    pos_hint: {'center_y': 0.5}
+                    group: "rot_angle"
+                    active: True
+                    id: chk_90
+                Label:
+                    size_hint_x: 0.1
+                    size_hint_y: None
+                    pos_hint: {'center_y': 0.5}
+                    text: "90"
+                    font_size: 20
+                CheckBox:
+                    size_hint_x: 0.1
+                    size_hint_y: None
+                    height: 42
+                    pos_hint: {'center_y': 0.5}
+                    group: "rot_angle"
+                    id: chk_180
+                Label:
+                    size_hint_x: 0.1
+                    size_hint_y: None
+                    pos_hint: {'center_y': 0.5}
+                    text: "180"
+                    font_size: 20
+                CheckBox:
+                    size_hint_x: 0.1
+                    size_hint_y: None
+                    height: 42
+                    pos_hint: {'center_y': 0.5}
+                    group: "rot_angle"
+                    id: chk_270
+                Label:
+                    size_hint_x: 0.1
+                    size_hint_y: None
+                    pos_hint: {'center_y': 0.5}
+                    text: "270"
+                    font_size: 20
+            BoxLayout:
+                orientation: 'horizontal'
+                padding: 0, 35, 0, 35
+                size_hint_y: None
+                height: 112
+                Label:
+                    size_hint_x: 0.25
+                    size_hint_y: None
+                    pos_hint: {'center_y': 0.5}
+                    text: "Length(mm):"
+                    font_size: 20
+                TextInput:
+                    size_hint_x: 0.25
+                    size_hint_y: None
+                    height: 42
+                    pos_hint: {'center_y': 0.5}
+                    id: img_width
+                    text: "150"
+                    font_size: 25
+                    color: 1, 0, 0, 1
+                Label:
+                    size_hint_x: 0.25
+                    size_hint_y: None
+                    pos_hint: {'center_y': 0.5}
+                    text: "Width(mm):"
+                    font_size: 20
+                TextInput:
+                    size_hint_x: 0.25
+                    size_hint_y: None
+                    height: 42
+                    pos_hint: {'center_y': 0.5}
+                    id: img_height
+                    text: "10"
+                    font_size: 25
                     color: 1, 0, 0, 1
             BoxLayout:
                 orientation: 'horizontal'
-                padding: 0, 40, 0, 40
+                padding: 0, 35, 0, 35
                 size_hint_y: None
-                height: 130
-                BoxLayout:
-                    size_hint_x: 0.5
-                    orientation: "vertical"
-                    BoxLayout:
-                        orientation: 'horizontal'
-                        size_hint_x: 0.9
-                        size_hint_y: None
-                        height: 20
-                        Label:
-                            text: "Radius Min"
-                            font_size: 16
-                            pos_hint_x: 0.1
-                        Label:
-                            id: radius_min
-                            pos_hint_x: 0.9
-                            font_size: 16
-                            text: "1"
-                            color: 1, 0, 0, 1
-                    Slider:
-                        id: radius_min_slider
-                        size_hint_y: None
-                        height: 30
-                        size_hint_x: 0.9
-                        min: 0
-                        max: 61
-                        value: 1
-                        on_value:
-                            radius_min.text = str(int(self.value))
-                            root.set_radius_min()
-                BoxLayout:
-                    size_hint_x: 0.5
-                    orientation: "vertical"
-                    BoxLayout:
-                        orientation: 'horizontal'
-                        size_hint_x: 0.9
-                        size_hint_y: None
-                        height: 20
-                        Label:
-                            text: "Radius Max"
-                            font_size: 16
-                            pos_hint_x: 0.1
-                        Label:
-                            id: radius_max
-                            pos_hint_x: 0.9
-                            font_size: 16
-                            text: "60"
-                            color: 1, 0, 0, 1
-                    Slider:
-                        id: radius_max_slider
-                        size_hint_y: None
-                        height: 30
-                        size_hint_x: 0.9
-                        min: 0
-                        max: 61
-                        value: 60
-                        on_value:radius_max.text = str(int(self.value))
+                height: 112
+                CheckBox:
+                    size_hint_x: 0.25
+                    size_hint_y: None
+                    height: 42
+                    pos_hint: {'center_y': 0.5}
+                    group: "round_chamfer"
+                    active: True
+                    id: chk_round
+                Label:
+                    size_hint_x: 0.25
+                    size_hint_y: None
+                    pos_hint: {'center_y': 0.5}
+                    text: "Round"
+                    font_size: 20
+                CheckBox:
+                    size_hint_x: 0.25
+                    size_hint_y: None
+                    height: 42
+                    pos_hint: {'center_y': 0.5}
+                    group: "round_chamfer"
+                    id: chk_chamfer
+                Label:
+                    size_hint_x: 0.25
+                    size_hint_y: None
+                    pos_hint: {'center_y': 0.5}
+                    text: "Chamfer"
+                    font_size: 20
             BoxLayout:
                 orientation: 'horizontal'
-                padding: 0, 40, 0, 40
+                padding: 0, 35, 0, 35
                 size_hint_y: None
-                height: 130
-                BoxLayout:
-                    size_hint_x: 0.5
-                    orientation: "vertical"
-                    BoxLayout:
-                        orientation: 'horizontal'
-                        size_hint_x: 0.9
-                        size_hint_y: None
-                        height: 20
-                        Label:
-                            text: "Area Min"
-                            font_size: 16
-                            pos_hint_x: 0.1
-                        Label:
-                            id: area_min
-                            pos_hint_x: 0.9
-                            font_size: 16
-                            text: "180"
-                            color: 1, 0, 0, 1
-                    Slider:
-                        id: area_min_slider
-                        size_hint_y: None
-                        height: 30
-                        size_hint_x: 0.9
-                        min: 0
-                        max: 4001
-                        value: 180
-                        on_value:area_min.text = str(int(self.value))
-                BoxLayout:
-                    size_hint_x: 0.5
-                    orientation: "vertical"
-                    BoxLayout:
-                        orientation: 'horizontal'
-                        size_hint_x: 0.9
-                        size_hint_y: None
-                        height: 20
-                        Label:
-                            text: "Area Max"
-                            font_size: 16
-                            pos_hint_x: 0.1
-                        Label:
-                            id: area_max
-                            pos_hint_x: 0.9
-                            font_size: 16
-                            text: "4000"
-                            color: 1, 0, 0, 1
-                    Slider:
-                        id: area_max_slider
-                        size_hint_y: None
-                        height: 30
-                        size_hint_x: 0.9
-                        min: 0
-                        max: 4001
-                        value: 4000
-                        on_value:area_max.text = str(int(self.value))
+                height: 112
+                Label:
+                    size_hint_x: 0.4
+                    size_hint_y: None
+                    pos_hint: {'center_y': 0.5}
+                    text: "Spot Color Channel Number:"
+                    font_size: 20
+                TextInput:
+                    size_hint_x: 0.1
+                    size_hint_y: None
+                    height: 42
+                    pos_hint: {'center_y': 0.5}
+                    id: spot_number
+                    text: "1"
+                    font_size: 25
+                    color: 1, 0, 0, 1
+                Label:
+                    size_hint_x: 0.4
+                    size_hint_y: None
+                    pos_hint: {'center_y': 0.5}
+                    text: "Round/Chamfer Value(mm):"
+                    font_size: 20
+                TextInput:
+                    size_hint_x: 0.1
+                    size_hint_y: None
+                    height: 42
+                    pos_hint: {'center_y': 0.5}
+                    id: round_value
+                    text: "10"
+                    font_size: 25
+                    color: 1, 0, 0, 1
             BoxLayout:
                 orientation: 'horizontal'
-                padding: 0, 40, 0, 40
+                padding: 0, 35, 0, 35
                 size_hint_y: None
-                height: 130
-                Button:
+                height: 112
+                CheckBox:
+                    size_hint_x: 0.25
                     size_hint_y: None
-                    height: 50
-                    text: "Start"
-                    pos_hint : {'x': 0, 'center_y':.6}
-                    background_color: blue_button_1
-                    on_press:
-                        root.start_counting()
-                Button:
+                    height: 42
+                    pos_hint: {'center_y': 0.5}
+                    group: "zoom_in_out"
+                    active: True
+                    id: chk_zoom_out
+                Label:
+                    size_hint_x: 0.25
                     size_hint_y: None
-                    height: 50
-                    text: "Stop"
-                    pos_hint : {'x': 0, 'center_y':.6}
-                    background_color: blue_button_1
-                    on_press:
-                        root.stop_counting()
-                Button:
+                    pos_hint: {'center_y': 0.5}
+                    text: "Zoom Out"
+                    font_size: 20
+                CheckBox:
+                    size_hint_x: 0.25
                     size_hint_y: None
-                    height: 50
-                    id: pause_btn
-                    text: "Pause"
-                    pos_hint : {'x': 0, 'center_y':.6}
-                    background_color: blue_button_1
-                    on_press:
-                        root.pause_counting()
-                Button:
+                    height: 42
+                    pos_hint: {'center_y': 0.5}
+                    group: "zoom_in_out"
+                    id: chk_zoom_in
+                Label:
+                    size_hint_x: 0.25
                     size_hint_y: None
-                    height: 50
-                    text: "Previous Counts"
-                    pos_hint : {'x': 0, 'center_y':.6}
-                    background_color: blue_button_1
-                    on_press:
-                        root.display_previous_number()
+                    pos_hint: {'center_y': 0.5}
+                    text: "Zoom In"
+                    font_size: 20
+            BoxLayout:
+                orientation: 'horizontal'
+                padding: 0, 35, 0, 65
+                size_hint_y: None
+                height: 142
+                Label:
+                    size_hint_x: 0.5
+                    size_hint_y: None
+                    pos_hint: {'center_y': 0.5}
+                    text: "Zoom Value(mm):"
+                    font_size: 20
+                TextInput:
+                    size_hint_x: 0.5
+                    size_hint_y: None
+                    height: 42
+                    pos_hint: {'center_y': 0.5}
+                    id: zoom_value
+                    text: "0.3"
+                    font_size: 25
+                    color: 1, 0, 0, 1
+            Button:
+                size_hint_y: None
+                height: 50
+                text: "Run"
+                pos_hint : {'center_x': 0.5}
+                background_color: blue_button_1
+                on_press:
+                    root.process_image()
             Widget:

@@ -1,0 +1,48 @@
+<LoadDialog>:
+    title: 'FileBrowser'
+    auto_dismiss: False
+    path: file_chooser.path
+    filename: file_chooser.selection
+    lb_error: er
+
+    BoxLayout:
+        size: root.size
+        pos: root.pos
+        orientation: "vertical"
+        FileChooserIconView:
+            id: file_chooser
+
+        BoxLayout:
+            size_hint_y: None
+            height: 30
+            Button:
+                text: "Cancel"
+                on_release: root.dismiss_popup()
+
+            Button:
+                text: "Load"
+                on_release: root.load()
+        Label:
+            id: er
+            foreground_color: 1, 250, 100, 1
+            color: 1, 0.67, 0, 1
+            size_hint_y: None
+            height: 0
+            text: root.error
+
+<AlertDialog>:
+    id: warn_pop
+    title: "Alert"
+    size_hint: None, None
+    size: 600, 200
+    auto_dismiss: False
+
+    BoxLayout:
+        orientation: 'vertical'
+        Label:
+            size_hint: 1, 0.7
+            text: root.label
+        Button:
+            size_hint: 1, 0.3
+            text: 'OK'
+            on_press: root.dismiss()

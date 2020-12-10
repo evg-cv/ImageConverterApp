@@ -1,99 +1,104 @@
-import threading
-import datetime
-import time
+import os
+import cv2
+import ntpath
 
-from kivy.app import App
 from kivy.lang import Builder
 from kivy.uix.screenmanager import Screen
-from src.db.manager import DatabaseManager
-from settings import MAIN_SCREEN_PATH
+from kivy.core.window import Window
+from kivy.properties import ObjectProperty, StringProperty
+from functools import partial
+from kivysrc.file_browser import LoadDialog, AlertDialog
+from utils.image_tool import convert_rbg_cmyk, get_round_chamfer_image, add_spot_channel
+from settings import MAIN_SCREEN_PATH, DPI, INCH
 
 
 Builder.load_file(MAIN_SCREEN_PATH)
 
 
 class MainScreen(Screen):
-    capture = None
-    event_take_video = None
-    texture = None
+    round = ObjectProperty(None)
+    chamfer = ObjectProperty(None)
+    zoom_in = ObjectProperty(None)
+    zoom_out = ObjectProperty(None)
+    rot_90 = ObjectProperty(None)
+    rot_180 = ObjectProperty(None)
+    rot_270 = ObjectProperty(None)
+    filePath = StringProperty('')
 
     def __init__(self, **kwargs):
-
         super(MainScreen, self).__init__(**kwargs)
-        self.db_manager = DatabaseManager()
-        self.display_ret = False
-        self.display_thread = None
-        self.pause_ret = False
-        self.ids.video.egg_counter.radius_min = int(self.ids.radius_min.text)
-        self.ids.video.egg_counter.radius_max = int(self.ids.radius_max.text)
-        self.ids.video.egg_counter.area_min = int(self.ids.area_min.text)
-        self.ids.video.egg_counter.area_max = int(self.ids.area_max.text)
+        Window.bind(on_dropfile=self._on_file_drop)
+        self.file_path = None
+        self.file_name = None
+
+    @staticmethod
+    def convert_dist_to_pixel(dist):
+        return int(dist * DPI / INCH)
+
+    def _on_file_drop(self, window, file_path):
+        print(file_path)
+        full_path = file_path.decode("utf-8")  # convert byte to string
+        self.ids.image.source = full_path
+        self.file_name = ntpath.basename(file_path).decode("utf-8")
+        self.file_path = full_path.replace(self.file_name, "")
+        self.file_name = self.file_name.replace(".png", "")
+        self.ids.image.reload()
+
+    def open_image(self):
+        file_browser = LoadDialog()
+        file_browser.bind(on_confirm=partial(self.get_selected_file))
+        file_browser.open()
+
+    def get_selected_file(self, *args):
+        args[0].dismiss()
+        self.file_path = args[1]
+        file_name = args[2][0]
+        self.file_name = file_name.replace(".png", "")
+        file_full_path = os.path.join(self.file_path, file_name)
+        self.ids.image.source = file_full_path
+
+    def process_image(self):
+        print(self.file_path)
+        print(self.file_name)
+        output_file_path = os.path.join(self.file_path, f"{self.file_name}.tiff")
+        print(output_file_path)
+        frame = cv2.imread(os.path.join(self.file_path, f"{self.file_name}.png"))
+        if self.rot_90.active:
+            rotated_frame = cv2.rotate(frame, cv2.ROTATE_90_COUNTERCLOCKWISE)
+        elif self.rot_180.active:
+            rotated_frame = cv2.rotate(frame, cv2.ROTATE_180)
+        else:
+            rotated_frame = cv2.rotate(frame, cv2.ROTATE_90_CLOCKWISE)
+        if self.round.active:
+            round_chamfer_ret = "round"
+        else:
+            round_chamfer_ret = "chamfer"
+        if self.zoom_in.active:
+            zoom_ret = "in"
+        else:
+            zoom_ret = "out"
+
+        r_img_width = self.convert_dist_to_pixel(dist=int(self.ids.img_width.text))
+        r_img_height = self.convert_dist_to_pixel(dist=int(self.ids.img_height.text))
+        round_chamfer_value = self.convert_dist_to_pixel(dist=float(self.ids.round_value.text))
+        spot_number = int(self.ids.spot_number.text)
+        zoom_value = self.convert_dist_to_pixel(dist=float(self.ids.zoom_value.text))
+        resized_frame = cv2.resize(rotated_frame, (r_img_width, r_img_height), interpolation=cv2.INTER_AREA)
+        round_chamfer_image = get_round_chamfer_image(frame=resized_frame, radius=round_chamfer_value,
+                                                      round_chamfer=round_chamfer_ret)
+        spot_image = add_spot_channel(frame=resized_frame, radius=round_chamfer_value, ch_num=spot_number,
+                                      zoom_value=zoom_value, zoom_ret=zoom_ret, round_chamfer=round_chamfer_ret,
+                                      round_chamfer_image=round_chamfer_image)
+        cmyk_image = convert_rbg_cmyk(frame=spot_image)
+        cv2.imwrite(output_file_path, cmyk_image)
+        warning_popup = AlertDialog(f"Saved in {output_file_path}!")
+        warning_popup.open()
 
     def on_enter(self, *args):
-        self.ids.video.start()
+        pass
 
     def on_leave(self, *args):
-        self.ids.video.stop()
         super(MainScreen, self).on_leave(*args)
-
-    def start_counting(self, stop_ret=True):
-        if stop_ret:
-            self.ids.video.egg_counter.egg_num = 0
-            self.ids.pause_btn.text = "Pause"
-        self.ids.video._egg_counter_ret = True
-        self.display_ret = True
-        self.display_thread = threading.Thread(target=self.display_egg_number)
-        self.display_thread.start()
-
-    def stop_counting(self, stop_ret=True):
-        self.ids.video._egg_counter_ret = False
-        self.display_ret = False
-        if self.display_thread is not None:
-            self.display_thread.join()
-        if stop_ret:
-            self.ids.egg_num.text = "0"
-            self.pause_ret = False
-            self.ids.pause_btn.text = "Pause"
-            current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            self.db_manager.insert_data(egg_num=str(self.ids.video.egg_counter.egg_num), t_stamp=current_time)
-
-    def pause_counting(self):
-        if (self.display_ret and not self.pause_ret) or (not self.display_ret and self.pause_ret):
-            self.pause_ret = not self.pause_ret
-            if self.pause_ret:
-                self.ids.pause_btn.text = "Resume"
-                self.stop_counting(stop_ret=False)
-            else:
-                self.ids.pause_btn.text = "Pause"
-                self.start_counting(stop_ret=False)
-
-    def display_previous_number(self):
-        if not self.display_ret:
-            self.ids.egg_num.text = self.db_manager.read_previous_data()
-
-    def display_egg_number(self):
-        while True:
-            if not self.display_ret:
-                break
-            self.ids.egg_num.text = str(self.ids.video.egg_counter.egg_num)
-            time.sleep(0.1)
-
-    def set_radius_min(self):
-        self.ids.video.egg_counter.radius_min = int(self.ids.radius_min_slider.value)
-
-    def set_radius_max(self):
-        self.ids.video.egg_counter.radius_max = int(self.ids.radius_max_slider.value)
-
-    def set_area_min(self):
-        self.ids.video.egg_counter.area_min = int(self.ids.area_min_slider.value)
-
-    def set_area_max(self):
-        self.ids.video.egg_counter.area_max = int(self.ids.area_max_slider.value)
-
-    def close_window(self):
-        self.display_ret = False
-        self.display_thread.join()
-        App.get_running_app().stop()
 
     def on_close(self):
         pass
