@@ -1,12 +1,10 @@
 import os
-import chromedriver_binary
+import requests
 
 from kivy.app import App
 from kivy.config import Config
 from kivy.core.window import Window
 from kivy.uix.screenmanager import ScreenManager
-from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
 from kivysrc.main_screen import MainScreen
 from kivysrc.file_browser import AlertDialog
 from settings import MAIN_SCREEN, APP_HEIGHT, APP_WIDTH, CHECK_URL
@@ -40,15 +38,10 @@ class ImageConverterTool(App):
 
     @staticmethod
     def check_url():
-        chrome_options = Options()
-        chrome_options.add_argument("--headless")
-        driver = webdriver.Chrome(chrome_options=chrome_options)
-        driver.get(CHECK_URL)
-        try:
-            driver.find_element_by_class_name(u'logo')
+        res = requests.get(CHECK_URL)
+        if res.status_code == 200:
             return True
-        except Exception as e:
-            print(e)
+        else:
             return False
 
     def build(self):
