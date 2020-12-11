@@ -1,0 +1,269 @@
+#:set dark_background [.0, .0, .0, 1.0]
+#:set blue_button_1 [0.46, 0.34, 0.86, 1.0]
+
+<MainScreen>:
+    round: chk_round
+    chamfer: chk_chamfer
+    zoom_in: chk_zoom_in
+    zoom_out: chk_zoom_out
+    rot_90: chk_90
+    rot_180: chk_180
+    rot_270: chk_270
+    BoxLayout:
+        orientation: 'horizontal'
+        BoxLayout:
+            canvas.before:
+                Color:
+                    rgba: dark_background
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
+
+            orientation: 'vertical'
+            size_hint: 0.5, 0.95
+            padding: [20, 20, 20, 20]
+            spacing: 10
+            Image:
+                id: image
+                allow_stretch: True
+                source: 'utils/img/init.png'
+                size_hint_y: None
+                height: 750
+                pos_hint : {'center_x':.5, 'center_y':.55}
+                animation_offset: 1
+            Button:
+                size_hint_y: None
+                size_hint_x: 0.5
+                height: 50
+                text: "Select Image"
+                pos_hint: {'center_x': 0.5}
+                background_color: blue_button_1
+                on_press:
+                    root.open_image()
+            Widget:
+        BoxLayout:
+            canvas.before:
+                Color:
+                    rgba: dark_background
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
+            orientation: 'vertical'
+            size_hint_x: 0.5
+            size_hint_y: 0.95
+            padding: 20, 40, 20, 20
+            spacing: 10
+            BoxLayout:
+                orientation: 'horizontal'
+                padding: 0, 30, 0, 15
+                size_hint_y: None
+                height: 187
+                Label:
+                    size_hint_x: 0.4
+                    size_hint_y: None
+                    pos_hint: {'center_y': 0.5}
+                    text: "Rotation Angle:"
+                    font_size: 20
+                CheckBox:
+                    size_hint_x: 0.1
+                    size_hint_y: None
+                    height: 42
+                    pos_hint: {'center_y': 0.5}
+                    group: "rot_angle"
+                    active: True
+                    id: chk_90
+                Label:
+                    size_hint_x: 0.1
+                    size_hint_y: None
+                    pos_hint: {'center_y': 0.5}
+                    text: "90"
+                    font_size: 20
+                CheckBox:
+                    size_hint_x: 0.1
+                    size_hint_y: None
+                    height: 42
+                    pos_hint: {'center_y': 0.5}
+                    group: "rot_angle"
+                    id: chk_180
+                Label:
+                    size_hint_x: 0.1
+                    size_hint_y: None
+                    pos_hint: {'center_y': 0.5}
+                    text: "180"
+                    font_size: 20
+                CheckBox:
+                    size_hint_x: 0.1
+                    size_hint_y: None
+                    height: 42
+                    pos_hint: {'center_y': 0.5}
+                    group: "rot_angle"
+                    id: chk_270
+                Label:
+                    size_hint_x: 0.1
+                    size_hint_y: None
+                    pos_hint: {'center_y': 0.5}
+                    text: "270"
+                    font_size: 20
+            BoxLayout:
+                orientation: 'horizontal'
+                padding: 0, 15, 0, 15
+                size_hint_y: None
+                height: 82
+                Label:
+                    size_hint_x: 0.25
+                    size_hint_y: None
+                    pos_hint: {'center_y': 0.5}
+                    text: "Length(mm):"
+                    font_size: 20
+                TextInput:
+                    size_hint_x: 0.25
+                    size_hint_y: None
+                    height: 42
+                    pos_hint: {'center_y': 0.5}
+                    id: img_width
+                    text: "150"
+                    font_size: 25
+                    color: 1, 0, 0, 1
+                Label:
+                    size_hint_x: 0.25
+                    size_hint_y: None
+                    pos_hint: {'center_y': 0.5}
+                    text: "Width(mm):"
+                    font_size: 20
+                TextInput:
+                    size_hint_x: 0.25
+                    size_hint_y: None
+                    height: 42
+                    pos_hint: {'center_y': 0.5}
+                    id: img_height
+                    text: "100"
+                    font_size: 25
+                    color: 1, 0, 0, 1
+            BoxLayout:
+                orientation: 'horizontal'
+                padding: 0, 15, 0, 15
+                size_hint_y: None
+                height: 82
+                CheckBox:
+                    size_hint_x: 0.25
+                    size_hint_y: None
+                    height: 42
+                    pos_hint: {'center_y': 0.5}
+                    group: "round_chamfer"
+                    active: True
+                    id: chk_round
+                Label:
+                    size_hint_x: 0.25
+                    size_hint_y: None
+                    pos_hint: {'center_y': 0.5}
+                    text: "Round"
+                    font_size: 20
+                CheckBox:
+                    size_hint_x: 0.25
+                    size_hint_y: None
+                    height: 42
+                    pos_hint: {'center_y': 0.5}
+                    group: "round_chamfer"
+                    id: chk_chamfer
+                Label:
+                    size_hint_x: 0.25
+                    size_hint_y: None
+                    pos_hint: {'center_y': 0.5}
+                    text: "Chamfer"
+                    font_size: 20
+            BoxLayout:
+                orientation: 'horizontal'
+                padding: 0, 15, 0, 15
+                size_hint_y: None
+                height: 82
+                Label:
+                    size_hint_x: 0.4
+                    size_hint_y: None
+                    pos_hint: {'center_y': 0.5}
+                    text: "Spot Color Channel Number:"
+                    font_size: 20
+                TextInput:
+                    size_hint_x: 0.1
+                    size_hint_y: None
+                    height: 42
+                    pos_hint: {'center_y': 0.5}
+                    id: spot_number
+                    text: "1"
+                    font_size: 25
+                    color: 1, 0, 0, 1
+                Label:
+                    size_hint_x: 0.4
+                    size_hint_y: None
+                    pos_hint: {'center_y': 0.5}
+                    text: "Round/Chamfer Value(mm):"
+                    font_size: 20
+                TextInput:
+                    size_hint_x: 0.1
+                    size_hint_y: None
+                    height: 42
+                    pos_hint: {'center_y': 0.5}
+                    id: round_value
+                    text: "10"
+                    font_size: 25
+                    color: 1, 0, 0, 1
+            BoxLayout:
+                orientation: 'horizontal'
+                padding: 0, 15, 0, 15
+                size_hint_y: None
+                height: 82
+                CheckBox:
+                    size_hint_x: 0.25
+                    size_hint_y: None
+                    height: 42
+                    pos_hint: {'center_y': 0.5}
+                    group: "zoom_in_out"
+                    active: True
+                    id: chk_zoom_out
+                Label:
+                    size_hint_x: 0.25
+                    size_hint_y: None
+                    pos_hint: {'center_y': 0.5}
+                    text: "Zoom Out"
+                    font_size: 20
+                CheckBox:
+                    size_hint_x: 0.25
+                    size_hint_y: None
+                    height: 42
+                    pos_hint: {'center_y': 0.5}
+                    group: "zoom_in_out"
+                    id: chk_zoom_in
+                Label:
+                    size_hint_x: 0.25
+                    size_hint_y: None
+                    pos_hint: {'center_y': 0.5}
+                    text: "Zoom In"
+                    font_size: 20
+            BoxLayout:
+                orientation: 'horizontal'
+                padding: 0, 15, 0, 35
+                size_hint_y: None
+                height: 92
+                Label:
+                    size_hint_x: 0.5
+                    size_hint_y: None
+                    pos_hint: {'center_y': 0.5}
+                    text: "Zoom Value(mm):"
+                    font_size: 20
+                TextInput:
+                    size_hint_x: 0.5
+                    size_hint_y: None
+                    height: 42
+                    pos_hint: {'center_y': 0.5}
+                    id: zoom_value
+                    text: "0.3"
+                    font_size: 25
+                    color: 1, 0, 0, 1
+            Button:
+                size_hint_y: None
+                height: 50
+                text: "Run"
+                pos_hint : {'center_x': 0.5}
+                background_color: blue_button_1
+                on_press:
+                    root.process_image()
+            Widget:

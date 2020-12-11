@@ -10,10 +10,10 @@ from kivy.properties import ObjectProperty, StringProperty
 from functools import partial
 from kivysrc.file_browser import LoadDialog, AlertDialog
 from utils.image_tool import get_round_chamfer_image, add_spot_channel
-from settings import MAIN_SCREEN_PATH, DPI, INCH
+from settings import MAIN_SCREEN_PATH_2, DPI, INCH
 
 
-Builder.load_file(MAIN_SCREEN_PATH)
+Builder.load_file(MAIN_SCREEN_PATH_2)
 
 
 class MainScreen(Screen):
@@ -60,7 +60,7 @@ class MainScreen(Screen):
 
     def process_image(self):
         output_tiff_path = os.path.join(self.file_path, f"{self.file_name}.tiff")
-        output_png_path = os.path.join(self.file_path, f"{self.file_name}.png")
+        output_png_path = os.path.join(self.file_path, f"{self.file_name}_modified.png")
         frame = cv2.imread(os.path.join(self.file_path, f"{self.file_name}.png"))
         if self.rot_90.active:
             rotated_frame = cv2.rotate(frame, cv2.ROTATE_90_COUNTERCLOCKWISE)
