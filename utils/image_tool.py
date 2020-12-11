@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
 
-from settings import THICKNESS, SOLIDITY, RGB_SCALE, CMYK_SCALE
+from settings import THICKNESS, SOLIDITY
 
 
 def create_mask_frame(frame, round_chamfer, spacing, radius):
@@ -130,7 +130,7 @@ def convert_rbg_cmyk(frame):
 
 
 if __name__ == '__main__':
-    f_frame = cv2.imread("/media/main/Data/Task/ImageProcessingApp/example-1.png")
+    f_frame = cv2.imread("")
     r_frame = cv2.resize(f_frame, None, fx=0.5, fy=0.5)
     r_c_image = get_round_chamfer_image(frame=r_frame,
                                         radius=30, round_chamfer="chamfer")

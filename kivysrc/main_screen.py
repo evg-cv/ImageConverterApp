@@ -1,6 +1,7 @@
 import os
 import cv2
 import ntpath
+from PIL import Image
 
 from kivy.lang import Builder
 from kivy.uix.screenmanager import Screen
@@ -8,7 +9,7 @@ from kivy.core.window import Window
 from kivy.properties import ObjectProperty, StringProperty
 from functools import partial
 from kivysrc.file_browser import LoadDialog, AlertDialog
-from utils.image_tool import convert_rbg_cmyk, get_round_chamfer_image, add_spot_channel
+from utils.image_tool import get_round_chamfer_image, add_spot_channel
 from settings import MAIN_SCREEN_PATH, DPI, INCH
 
 
@@ -58,10 +59,8 @@ class MainScreen(Screen):
         self.ids.image.source = file_full_path
 
     def process_image(self):
-        print(self.file_path)
-        print(self.file_name)
-        output_file_path = os.path.join(self.file_path, f"{self.file_name}.tiff")
-        print(output_file_path)
+        output_tiff_path = os.path.join(self.file_path, f"{self.file_name}.tiff")
+        output_png_path = os.path.join(self.file_path, f"{self.file_name}.png")
         frame = cv2.imread(os.path.join(self.file_path, f"{self.file_name}.png"))
         if self.rot_90.active:
             rotated_frame = cv2.rotate(frame, cv2.ROTATE_90_COUNTERCLOCKWISE)
@@ -89,9 +88,11 @@ class MainScreen(Screen):
         spot_image = add_spot_channel(frame=resized_frame, radius=round_chamfer_value, ch_num=spot_number,
                                       zoom_value=zoom_value, zoom_ret=zoom_ret, round_chamfer=round_chamfer_ret,
                                       round_chamfer_image=round_chamfer_image)
-        cmyk_image = convert_rbg_cmyk(frame=spot_image)
-        cv2.imwrite(output_file_path, cmyk_image)
-        warning_popup = AlertDialog(f"Saved in {output_file_path}!")
+        cv2.imwrite(output_png_path, spot_image)
+        png_image = Image.open(output_png_path)
+        cmyk_image = png_image.convert('CMYK')
+        cmyk_image.save(output_tiff_path)
+        warning_popup = AlertDialog(f"Saved in {output_tiff_path}!")
         warning_popup.open()
 
     def on_enter(self, *args):
